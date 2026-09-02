@@ -64,12 +64,15 @@ document.querySelectorAll('.project-card').forEach((card) => {
 
 /* ---------- Mobile nav toggle ---------- */
 const navToggle = document.getElementById('nav-toggle');
+const navLinks = document.querySelector('.nav-links');
 navToggle.addEventListener('click', () => {
-  const links = document.querySelector('.nav-links');
-  const open = links.classList.toggle('open');
-  navToggle.classList.toggle('active', open);
-  gsap.fromTo(links, { display: open ? 'flex' : 'none' }, {});
+  navLinks.classList.toggle('open');
+  navToggle.classList.toggle('active');
 });
+navLinks.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+  navLinks.classList.remove('open');
+  navToggle.classList.remove('active');
+}));
 
 /* ---------- Canvas: constellation / particle network background ---------- */
 const canvas = document.getElementById('bg-canvas');
