@@ -1,3 +1,4 @@
+document.title = '[SCRIPT-RAN] ' + document.title;
 window.addEventListener('error', (e) => (window.__diag=window.__diag||[]).push('DIAG:WINDOW_ERROR: ' + e.message + ' @ ' + e.filename + ':' + e.lineno));
 (window.__diag=window.__diag||[]).push('DIAG:0:start');
 try {
