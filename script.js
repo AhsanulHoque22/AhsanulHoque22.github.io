@@ -1,10 +1,15 @@
+console.log('DIAG:0:start');
+try {
 gsap.registerPlugin(ScrollTrigger);
+console.log('DIAG:1:registerPlugin ok');
 
 /* ---------- Lenis smooth scroll wired to GSAP ticker ---------- */
 const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+console.log('DIAG:2:lenis created');
 lenis.on('scroll', ScrollTrigger.update);
 gsap.ticker.add((time) => lenis.raf(time * 1000));
 gsap.ticker.lagSmoothing(0);
+console.log('DIAG:3:lenis wired');
 
 /* ---------- Scroll progress bar ---------- */
 gsap.to('#progress-bar', {
@@ -12,17 +17,23 @@ gsap.to('#progress-bar', {
   ease: 'none',
   scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: true }
 });
+console.log('DIAG:4:progress bar ok');
 
 /* ---------- Nav background on scroll ---------- */
 ScrollTrigger.create({
   start: 100,
   onUpdate: (self) => document.getElementById('navbar').classList.toggle('scrolled', self.scroll() > 100)
 });
+console.log('DIAG:5:nav scrolltrigger ok');
 
 /* ---------- Hero entrance ---------- */
 gsap.timeline({ defaults: { ease: 'power4.out' } })
   .fromTo('.hero-title .line', { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1, stagger: 0.12 }, 0.1)
   .to('.reveal-line', { opacity: 1, y: 0, duration: 0.8, stagger: 0.1 }, 0.5);
+console.log('DIAG:6:hero timeline ok');
+} catch (e) {
+  console.error('DIAG:CAUGHT:', e.message, e.stack);
+}
 
 /* ---------- Generic reveal-on-scroll (IntersectionObserver: no dependency
    on ScrollTrigger's scroll-position sync with Lenis, so it can't get stuck
