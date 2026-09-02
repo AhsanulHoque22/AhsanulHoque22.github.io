@@ -239,8 +239,11 @@ footer{
   border-top:1px solid var(--line);font-family:var(--mono);font-size:.75rem;color:var(--ink-dim);
 }
 
-/* reveal defaults (JS toggles .is-visible) */
+/* reveal defaults: .reveal-line is driven directly by the hero GSAP timeline
+   (time-based, no transition needed); .reveal-up is toggled by an
+   IntersectionObserver so it gets its own CSS transition. */
 .reveal-up,.reveal-line{opacity:0;transform:translateY(24px);}
+.reveal-up{transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1);}
 .reveal-up.is-visible,.reveal-line.is-visible{opacity:1;transform:none;}
 
 @media (max-width:860px){

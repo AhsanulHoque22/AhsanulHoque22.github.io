@@ -24,33 +24,40 @@ gsap.timeline({ defaults: { ease: 'power4.out' } })
   .fromTo('.hero-title .line', { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1, stagger: 0.12 }, 0.1)
   .to('.reveal-line', { opacity: 1, y: 0, duration: 0.8, stagger: 0.1 }, 0.5);
 
-/* ---------- Generic reveal-on-scroll ---------- */
-document.querySelectorAll('.reveal-up').forEach((el) => {
-  ScrollTrigger.create({
-    trigger: el,
-    start: 'top 88%',
-    onEnter: () => el.classList.add('is-visible'),
+/* ---------- Generic reveal-on-scroll (IntersectionObserver: no dependency
+   on ScrollTrigger's scroll-position sync with Lenis, so it can't get stuck
+   if that sync ever drifts) ---------- */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('is-visible');
+      revealObserver.unobserve(entry.target);
+    }
   });
-});
+}, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+document.querySelectorAll('.reveal-up').forEach((el) => revealObserver.observe(el));
 
 /* ---------- Count-up stats ---------- */
-document.querySelectorAll('.stat-num').forEach((el) => {
-  const target = parseFloat(el.dataset.count);
-  ScrollTrigger.create({
-    trigger: el,
-    start: 'top 90%',
-    once: true,
-    onEnter: () => {
-      const obj = { val: 0 };
-      gsap.to(obj, {
-        val: target,
-        duration: 1.6,
-        ease: 'power2.out',
-        onUpdate: () => (el.textContent = target % 1 === 0 ? Math.floor(obj.val) : obj.val.toFixed(2)),
-      });
-    },
+const statObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) return;
+    statObserver.unobserve(entry.target);
+    const el = entry.target;
+    const target = parseFloat(el.dataset.count);
+    const obj = { val: 0 };
+    gsap.to(obj, {
+      val: target,
+      duration: 1.6,
+      ease: 'power2.out',
+      onUpdate: () => (el.textContent = target % 1 === 0 ? Math.floor(obj.val) : obj.val.toFixed(2)),
+    });
   });
-});
+}, { threshold: 0.3 });
+document.querySelectorAll('.stat-num').forEach((el) => statObserver.observe(el));
+
+/* ---------- Safety net: if any reveal element is somehow never observed
+   (e.g. already in view before JS ran), reveal everything after 1.5s ---------- */
+setTimeout(() => document.querySelectorAll('.reveal-up:not(.is-visible)').forEach((el) => el.classList.add('is-visible')), 1500);
 
 /* ---------- Project card hover tilt-lite ---------- */
 document.querySelectorAll('.project-card').forEach((card) => {
