@@ -1,17 +1,10 @@
-document.title = '[SCRIPT-RAN] ' + document.title;
-window.addEventListener('error', (e) => (window.__diag=window.__diag||[]).push('DIAG:WINDOW_ERROR: ' + e.message + ' @ ' + e.filename + ':' + e.lineno));
-(window.__diag=window.__diag||[]).push('DIAG:0:start');
-try {
 gsap.registerPlugin(ScrollTrigger);
-(window.__diag=window.__diag||[]).push('DIAG:1:registerPlugin ok');
 
 /* ---------- Lenis smooth scroll wired to GSAP ticker ---------- */
 const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
-(window.__diag=window.__diag||[]).push('DIAG:2:lenis created');
 lenis.on('scroll', ScrollTrigger.update);
 gsap.ticker.add((time) => lenis.raf(time * 1000));
 gsap.ticker.lagSmoothing(0);
-(window.__diag=window.__diag||[]).push('DIAG:3:lenis wired');
 
 /* ---------- Scroll progress bar ---------- */
 gsap.to('#progress-bar', {
@@ -19,23 +12,17 @@ gsap.to('#progress-bar', {
   ease: 'none',
   scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: true }
 });
-(window.__diag=window.__diag||[]).push('DIAG:4:progress bar ok');
 
 /* ---------- Nav background on scroll ---------- */
 ScrollTrigger.create({
   start: 100,
   onUpdate: (self) => document.getElementById('navbar').classList.toggle('scrolled', self.scroll() > 100)
 });
-(window.__diag=window.__diag||[]).push('DIAG:5:nav scrolltrigger ok');
 
 /* ---------- Hero entrance ---------- */
 gsap.timeline({ defaults: { ease: 'power4.out' } })
   .fromTo('.hero-title .line', { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1, stagger: 0.12 }, 0.1)
   .to('.reveal-line', { opacity: 1, y: 0, duration: 0.8, stagger: 0.1 }, 0.5);
-(window.__diag=window.__diag||[]).push('DIAG:6:hero timeline ok');
-} catch (e) {
-  (window.__diag=window.__diag||[]).push('DIAG:CAUGHT: ' + e.message + ' | ' + e.stack);
-}
 
 /* ---------- Generic reveal-on-scroll (IntersectionObserver: no dependency
    on ScrollTrigger's scroll-position sync with Lenis, so it can't get stuck
@@ -49,7 +36,6 @@ const revealObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
 document.querySelectorAll('.reveal-up').forEach((el) => revealObserver.observe(el));
-(window.__diag=window.__diag||[]).push('DIAG:7:revealObserver attached to ' + document.querySelectorAll('.reveal-up').length + ' els');
 
 /* ---------- Count-up stats ---------- */
 const statObserver = new IntersectionObserver((entries) => {
